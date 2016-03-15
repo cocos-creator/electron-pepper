@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+
+    <script type="text/javascript">
+    HelloTutorialModule = null;  // Global application object.
+    statusText = 'NO-STATUS';
+
+    // Indicate load success.
+    function buttonStop() {
+      graphics_3d = document.getElementById('graphics_3d');
+      graphics_3d.postMessage(false);
+    }
+
+    function buttonStart() {
+      graphics_3d = document.getElementById('graphics_3d');
+      graphics_3d.postMessage(true);
+    }
+
+    function handleMessage(message_event) {
+      console.log(message_event.data);
+      // alert(message_event.data);
+    }
+
+
+  </script>
+
+  </head>
+  <body>
+
+    <embed width="200" height="200"
+        id="graphics_3d"
+        type="application/x-graphics_3d">
+
+        <script type="text/javascript">
+            var graphics_3d = document.getElementById('graphics_3d');
+            graphics_3d.addEventListener('message', handleMessage, true);
+        </script>
+
+    </embed>
+
+    <button onclick="buttonStop()">stop animation</button>
+    <button onclick="buttonStart()">start animation</button>
+
+  </body>
+</html>
