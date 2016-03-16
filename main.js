@@ -5,7 +5,7 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 
 app.commandLine.appendSwitch('register-pepper-plugins', 
-    path.join(__dirname,'graphics_3d.so;application/x-graphics_3d'));
+    path.join(__dirname,'audio.so;application/x-audio'));
 
 let mainWindow;
 

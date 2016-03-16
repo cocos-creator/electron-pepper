@@ -4,45 +4,24 @@
     <meta charset="UTF-8">
     <title>Hello</title>
 
-    <script type="text/javascript">
-    HelloTutorialModule = null;  // Global application object.
-    statusText = 'NO-STATUS';
-
-    // Indicate load success.
-    function buttonStop() {
-      graphics_3d = document.getElementById('graphics_3d');
-      graphics_3d.postMessage(false);
-    }
-
-    function buttonStart() {
-      graphics_3d = document.getElementById('graphics_3d');
-      graphics_3d.postMessage(true);
-    }
-
-    function handleMessage(message_event) {
-      console.log(message_event.data);
-      // alert(message_event.data);
-    }
-
-
-  </script>
+    
 
   </head>
   <body>
 
-    <embed width="200" height="200"
-        id="graphics_3d"
-        type="application/x-graphics_3d">
+    <embed width="0" height="0"
+        id="audio"
+        type="application/x-audio"/>
 
-        <script type="text/javascript">
-            var graphics_3d = document.getElementById('graphics_3d');
-            graphics_3d.addEventListener('message', handleMessage, true);
-        </script>
+    <p>Click the buttons to start and stop the sine wave playing.</p>
+    <button id="playButton">Play</button>
+    <button id="stopButton">Stop</button>
 
-    </embed>
+    <p>Enter the frequency of the sine wave:</p>
+    <input type="text" size="15" id="frequencyField" value="440">
 
-    <button onclick="buttonStop()">stop animation</button>
-    <button onclick="buttonStart()">start animation</button>
+    <script type="text/javascript" src="example.js"></script>
+
 
   </body>
 </html>
