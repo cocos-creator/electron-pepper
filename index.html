@@ -5,23 +5,28 @@
     <title>Hello</title>
 
     <script type="text/javascript">
-    HelloTutorialModule = null;  // Global application object.
-    statusText = 'NO-STATUS';
 
     // Indicate load success.
-    function buttonStop() {
-      graphics_3d = document.getElementById('graphics_3d');
-      graphics_3d.postMessage(false);
+    function readFileContent() {
+      var file_io = document.getElementById('file_io');
+      file_io.postMessage("read");
     }
 
-    function buttonStart() {
-      graphics_3d = document.getElementById('graphics_3d');
-      graphics_3d.postMessage(true);
+    function deleteFile() {
+      var file_io = document.getElementById('file_io');
+      file_io.postMessage("delete");
     }
 
-    function handleMessage(message_event) {
-      console.log(message_event.data);
-      // alert(message_event.data);
+    function saveFileContent() {
+      var text = document.getElementById('text');
+      var file_io = document.getElementById('file_io');
+      file_io.postMessage('save:' + text.value)
+    }
+
+    function handleMessage(event) {
+      var p = document.getElementById('file_content');
+      data = event.data.split('\n').join('<br>');
+      p.innerHTML = 'file content is:<br>' + data;
     }
 
 
@@ -30,19 +35,33 @@
   </head>
   <body>
 
-    <embed width="200" height="200"
-        id="graphics_3d"
-        type="application/x-graphics_3d">
+    <embed width="0" height="0"
+        id="file_io"
+        type="application/x-file_io">
 
         <script type="text/javascript">
-            var graphics_3d = document.getElementById('graphics_3d');
-            graphics_3d.addEventListener('message', handleMessage, true);
+            var file_io = document.getElementById('file_io');
+            file_io.addEventListener('message', handleMessage, true);
+
+            var file_io = document.getElementById('file_io');
+            file_io.postMessage(__dirname);
         </script>
 
     </embed>
+    <p id="file_content">
 
-    <button onclick="buttonStop()">stop animation</button>
-    <button onclick="buttonStart()">start animation</button>
+    </p>
+
+    <button onclick="readFileContent()">read file content</button>
+    <br>
+    <button onclick="deleteFile()">delete file</button>
+    <br>
+
+    <textarea id="text" rows="4" cols="50">
+    Input something to save to file.
+    </textarea>
+    <br>
+    <button onclick="saveFileContent()">save</button>
 
   </body>
 </html>
