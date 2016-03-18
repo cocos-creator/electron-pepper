@@ -5,7 +5,7 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 
 app.commandLine.appendSwitch('register-pepper-plugins', 
-    path.join(__dirname,'input_event.so;application/x-input_event'));
+    path.join(__dirname,'socket.so;application/x-socket'));
 
 let mainWindow;
 

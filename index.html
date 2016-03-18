@@ -6,54 +6,147 @@
 
     <script type="text/javascript">
 
-    /** An array of messages to display in the element with id "log". */
-  var logMessageArray = [];
+        function attachListeners() {
+          document.getElementById('connectForm').addEventListener('submit', doConnect);
+          document.getElementById('sendForm').addEventListener('submit', doSend);
+          document.getElementById('listenForm').addEventListener('submit', doListen);
+          document.getElementById('closeButton').addEventListener('click', doClose);
+      }
 
-  /**
-   * Add a message to an element with id "log".
-   *
-   * This function is used by the default "log:" message handler.
-   *
-   * @param {string} message The message to log.
-   */
-  function logMessage(message) {
-    logMessageArray.push(message);
-    if (logMessageArray.length > 20)
-      logMessageArray.shift();
 
-    document.getElementById('log').textContent = logMessageArray.join('\n');
-    console.log(message);
-  }
+      var msgTcpCreate = 't;'
+      var msgUdpCreate = 'u;'
+      var msgSend = 's;'
+      var msgClose = 'c;'
+      var msgListen = 'l;'
 
-    function handleMessage(event) {
-      logMessage(event.data);
-    }
+      function doConnect(event) {
+        // Send a request message. See also socket.cc for the request format.
+        event.preventDefault();
+        var hostname = document.getElementById('hostname').value;
+        var type = document.getElementById('connect_type').value;
+        logMessage(type);
+        var socket = document.getElementById('socket');
+        if (type == 'tcp') {
+          socket.postMessage(msgTcpCreate + hostname);
+        } else {
+          socket.postMessage(msgUdpCreate + hostname);
+        }
+      }
+
+      function doSend(event) {
+        // Send a request message. See also socket.cc for the request format.
+        event.preventDefault();
+        var message = document.getElementById('message').value;
+        while (message.indexOf('\\n') > -1)
+          message = message.replace('\\n', '\n');
+
+        var socket = document.getElementById('socket');
+        socket.postMessage(msgSend + message);
+      }
+
+      function doListen(event) {
+        // Listen a the given port.
+        event.preventDefault();
+        var port = document.getElementById('port').value;
+        var type = document.getElementById('listen_type').value;
+        var socket = document.getElementById('socket');
+        socket.postMessage(msgListen + port);
+      }
+
+      function doClose() {
+        // Send a request message. See also socket.cc for the request format.
+        var socket = document.getElementById('socket');
+        socket.postMessage(msgClose);
+      }
+
+       var logMessageArray = [];
+      function logMessage(message) {
+        logMessageArray.push(message);
+        if (logMessageArray.length > 20)
+          logMessageArray.shift();
+
+        document.getElementById('log').textContent = logMessageArray.join('\n');
+        console.log(message);
+      }
+
+      function handleMessage(message) {
+        logMessage(message.data);
+      }
 
   </script>
 
   </head>
   <body>
 
-    <embed width="200" height="200"
-        id="input"
-        style="bgcolor:gray"
-        type="application/x-input_event">
+    <embed width="0" height="0"
+        id="socket"
+        type="application/x-socket">
 
         <script type="text/javascript">
-            var input = document.getElementById('input');
-            input.addEventListener('message', handleMessage, true);
-            input.style.backgroundColor = 'gray';
+            var socket = document.getElementById('socket');
+            socket.addEventListener('message', handleMessage, true);
         </script>
 
     </embed>
    
-  <p>This example shows how to handle input events.</p>
-  <p>Click or touch the box to the left to see the events being sent to the
-     NaCl module. When it has focus, the module will also accept keyboard
-     events.</p>
+  
+  <p>The socket example demonstrates how to use the TCP and UDP socket API.<br>
+     This API is normally only available to packaged apps with the requisite
+     socket permission, but can be enabled for debugging purposes using the
+     <code>--allow-nacl-socket-api=&lt;hostname&gt;</code> command line
+     flag.<br>
+     First set a server address in the form of 'hostname:port', then push the
+     "Connect" button to establish a connection.<br>
+     "Send" button sends the message of the text area to the the remote host.
+     Any data received back will be output to the status log.<br>
+     For example, try connecting to a TCP echo server that will reply with
+     whatever bytes you send, or connect to a web server and send a GET
+     request.<br>
+     "Close" button closes the connection.<br>
+  </p>
 
-  <h2 style="clear: left">Events:</h2>
+  <form id="connectForm">
+    <select id="connect_type">
+      <option value="tcp">TCP</option>
+      <option value="udp">UDP</option>
+    </select>
+    <input type="text" id="hostname" size="25"
+      value="google.com:80">
+    <input type="submit" value="Connect">
+  </form>
+
+  <form id="sendForm">
+    <input type="text" id="message" value="GET / HTTP/1.1\n\n" size="50">
+    <input type="submit" value="Send">
+  </form>
+
+  <button id="closeButton">Close</button>
+
+  <div>
+    <h2>Create a local server:</h2>
+    <p>The "Listen" button can be used create a local TCP or UDP echo server
+    listenting on the port specified. Once started this server can be connected
+    to by entering <code>localhost:&lt;port&gt;<br> above.
+    </p>
+    <p>
+    <form id="listenForm">
+      <select id="listen_type">
+        <option value="tcp">TCP</option>
+        <option value="udp">UDP</option>
+      </select>
+      Port:
+      <input type="text" id="port" value="8080" size="6">
+      <input type="submit" value="Listen">
+    </form>
+    </p>
+  </div>
+
   <pre id="log" style="font-weight: bold"></pre>
+
+  <script type="text/javascript">
+    attachListeners();
+  </script>
 
   </body>
 </html>
