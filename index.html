@@ -6,62 +6,54 @@
 
     <script type="text/javascript">
 
-    // Indicate load success.
-    function readFileContent() {
-      var file_io = document.getElementById('file_io');
-      file_io.postMessage("read");
-    }
+    /** An array of messages to display in the element with id "log". */
+  var logMessageArray = [];
 
-    function deleteFile() {
-      var file_io = document.getElementById('file_io');
-      file_io.postMessage("delete");
-    }
+  /**
+   * Add a message to an element with id "log".
+   *
+   * This function is used by the default "log:" message handler.
+   *
+   * @param {string} message The message to log.
+   */
+  function logMessage(message) {
+    logMessageArray.push(message);
+    if (logMessageArray.length > 20)
+      logMessageArray.shift();
 
-    function saveFileContent() {
-      var text = document.getElementById('text');
-      var file_io = document.getElementById('file_io');
-      file_io.postMessage('save:' + text.value)
-    }
+    document.getElementById('log').textContent = logMessageArray.join('\n');
+    console.log(message);
+  }
 
     function handleMessage(event) {
-      var p = document.getElementById('file_content');
-      data = event.data.split('\n').join('<br>');
-      p.innerHTML = 'file content is:<br>' + data;
+      logMessage(event.data);
     }
-
 
   </script>
 
   </head>
   <body>
 
-    <embed width="0" height="0"
-        id="file_io"
-        type="application/x-file_io">
+    <embed width="200" height="200"
+        id="input"
+        style="bgcolor:gray"
+        type="application/x-input_event">
 
         <script type="text/javascript">
-            var file_io = document.getElementById('file_io');
-            file_io.addEventListener('message', handleMessage, true);
-
-            var file_io = document.getElementById('file_io');
-            file_io.postMessage(__dirname);
+            var input = document.getElementById('input');
+            input.addEventListener('message', handleMessage, true);
+            input.style.backgroundColor = 'gray';
         </script>
 
     </embed>
-    <p id="file_content">
+   
+  <p>This example shows how to handle input events.</p>
+  <p>Click or touch the box to the left to see the events being sent to the
+     NaCl module. When it has focus, the module will also accept keyboard
+     events.</p>
 
-    </p>
-
-    <button onclick="readFileContent()">read file content</button>
-    <br>
-    <button onclick="deleteFile()">delete file</button>
-    <br>
-
-    <textarea id="text" rows="4" cols="50">
-    Input something to save to file.
-    </textarea>
-    <br>
-    <button onclick="saveFileContent()">save</button>
+  <h2 style="clear: left">Events:</h2>
+  <pre id="log" style="font-weight: bold"></pre>
 
   </body>
 </html>
